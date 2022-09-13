@@ -106,6 +106,8 @@ message EnginePayloadAttributes {
   uint64 timestamp = 1;
   types.H256 prevRandao = 2;
   types.H160 suggestedFeeRecipient = 3;
+  repeated bytes transactions = 4;
+  bool noTxPool = 5;
 }
 
 message EngineForkChoiceState {
