@@ -116,4 +116,6 @@ message SnapshotsRequest {
 
 message SnapshotsReply {
   repeated string files = 1;
+  repeated string BlockFiles = 2;
+  repeated string HistoryFiles = 3;
 }
