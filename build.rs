@@ -1,3 +1,5 @@
+use std::{env, path::PathBuf};
+
 fn config() -> prost_build::Config {
     let mut config = prost_build::Config::new();
     config.bytes(&["."]);
@@ -5,12 +7,16 @@ fn config() -> prost_build::Config {
 }
 
 fn make_protos(protos: &[&str]) {
+    let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
     tonic_build::configure()
+        .file_descriptor_set_path(out_dir.join("descriptor.bin"))
         .compile_with_config(config(), protos, &["."])
         .unwrap();
 }
 
 fn main() {
+    std::env::set_var("PROTOC", protobuf_src::protoc());
+
     let mut protos = vec!["types/types.proto"];
 
     if cfg!(feature = "sentry") {
