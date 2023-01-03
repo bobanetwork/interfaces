@@ -41,8 +41,8 @@ service KV {
   // Snapshots returns list of current snapshot files. Then client can just open all of them.
   rpc Snapshots(SnapshotsRequest) returns (SnapshotsReply);
 
-
-  //Temporal methods
+  // Temporal methods
+  rpc Range(RangeReq) returns (stream Pairs);
   rpc HistoryGet(HistoryGetReq) returns (HistoryGetReply);
   rpc IndexRange(IndexRangeReq) returns (stream IndexRangeReply);
 }
@@ -143,10 +143,10 @@ message SnapshotsReply {
   repeated string files = 1;
 }
 
-//Temporal methods
+// Temporal methods
 message HistoryGetReq {
   uint64 txID = 1; // returned by .Tx()
-  string name = 2;
+  string table = 2;
   bytes k = 3;
   uint64 ts = 4;
 }
@@ -157,7 +157,7 @@ message  HistoryGetReply{
 }
 message IndexRangeReq {
   uint64 txID = 1; // returned by .Tx()
-  string name = 2;
+  string table = 2;
   bytes k = 3;
   uint64 fromTs = 4;
   uint64 toTs = 5;
@@ -165,4 +165,17 @@ message IndexRangeReq {
 
 message IndexRangeReply  {
   repeated uint64 timestamps = 1;
+}
+
+message RangeReq {
+  uint64 txID = 1; // returned by .Tx()
+  string table = 2;
+  bytes fromPrefix = 3;
+  bytes toPrefix = 4;
+}
+
+message Pairs {
+  repeated bytes keys = 1;
+  repeated bytes values = 2;
+//  uint32 estimateTotal = 3; // send once after stream creation
 }
