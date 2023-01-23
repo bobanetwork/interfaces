@@ -24,6 +24,12 @@ option go_package = "./remote;remote";
 // Prefix: Has(k, prefix)
 // Amount: [from, INF) AND maximum N records
 
+//Entity Naming:
+// State: simple table in db
+// InvertedIndex: supports range-scans
+// History: can return value of key K as of given TimeStamp. Doesn't know about latest/current value of key K. Returns NIL if K not changed after TimeStamp.
+// Domain: as History but also aware about latest/current value of key K.
+
 // Provides methods to access key-value data
 service KV {
   // Version returns the service version number
@@ -41,10 +47,11 @@ service KV {
   // Snapshots returns list of current snapshot files. Then client can just open all of them.
   rpc Snapshots(SnapshotsRequest) returns (SnapshotsReply);
 
-  // Temporal methods
-  rpc Range(RangeReq) returns (stream Pairs);
+  //Temporal methods
+  rpc DomainGet(DomainGetReq) returns (DomainGetReply);
   rpc HistoryGet(HistoryGetReq) returns (HistoryGetReply);
   rpc IndexRange(IndexRangeReq) returns (stream IndexRangeReply);
+  rpc Range(RangeReq) returns (stream Pairs);
 }
 
 enum Op {
@@ -143,7 +150,20 @@ message SnapshotsReply {
   repeated string files = 1;
 }
 
-// Temporal methods
+//Temporal methods
+message DomainGetReq {
+  uint64 txID = 1; // returned by .Tx()
+  string table = 2;
+  bytes k = 3;
+  uint64 ts = 4;
+  bytes k2 = 5;
+}
+
+message DomainGetReply{
+  bytes v = 1;
+  bool ok = 2;
+}
+
 message HistoryGetReq {
   uint64 txID = 1; // returned by .Tx()
   string table = 2;
@@ -164,10 +184,10 @@ message IndexRangeReq {
 }
 
 message IndexRangeReply  {
-  repeated uint64 timestamps = 1;
+  repeated uint64 timestamps = 1; //TODO: it can be a bitmap
 }
 
-message RangeReq {
+message RangeReq  {
   uint64 txID = 1; // returned by .Tx()
   string table = 2;
   bytes fromPrefix = 3;
@@ -177,5 +197,5 @@ message RangeReq {
 message Pairs {
   repeated bytes keys = 1;
   repeated bytes values = 2;
-//  uint32 estimateTotal = 3; // send once after stream creation
+ //  uint32 estimateTotal = 3; // send once after stream creation
 }
