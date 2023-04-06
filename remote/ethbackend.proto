@@ -122,6 +122,7 @@ message EnginePayloadAttributes {
   repeated types.Withdrawal withdrawals = 5;
   repeated bytes transactions = 6;
   bool noTxPool = 7;
+  optional uint64 gasLimit = 8;
 }
 
 message EngineForkChoiceState {
