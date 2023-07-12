@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package execution;
 
+import "google/protobuf/empty.proto";
 import "types/types.proto";
 
 option go_package = "./execution;execution";
@@ -105,3 +106,5 @@ service Execution {
     rpc IsCanonicalHash(types.H256) returns(IsCanonicalResponse);
     rpc GetHeaderHashNumber(types.H256) returns(GetHeaderHashNumberResponse);
 }
+
+  
