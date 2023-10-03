@@ -43,8 +43,12 @@ service ETHBACKEND {
   // Peers collects and returns peers information from all running sentry instances.
   rpc Peers(google.protobuf.Empty) returns (PeersReply);
 
+  rpc AddPeer(AddPeerRequest) returns (AddPeerReply);
+
   // PendingBlock returns latest built block.
   rpc PendingBlock(google.protobuf.Empty) returns (PendingBlockReply);
+
+  rpc BorEvent(BorEventRequest) returns (BorEventReply);
 }
 
 enum Event {
@@ -57,9 +61,6 @@ enum Event {
   NEW_SNAPSHOT = 3;
 }
 
-message PendingBlockReply {
-  bytes block_rlp = 1;
-}
 
 message EtherbaseRequest {}
 
@@ -131,6 +132,10 @@ message NodesInfoRequest {
   uint32 limit = 1;
 }
 
+message AddPeerRequest {
+  string url = 1;
+}
+
 message NodesInfoReply {
   repeated types.NodeInfoReply nodes_info = 1;
 }
@@ -139,3 +144,29 @@ message PeersReply {
   repeated types.PeerInfo peers = 1;
 }
 
+message AddPeerReply {
+  bool success = 1;
+}
+
+message PendingBlockReply {
+  bytes block_rlp = 1;
+}
+
+message EngineGetPayloadBodiesByHashV1Request {
+  repeated types.H256 hashes = 1;
+}
+
+message EngineGetPayloadBodiesByRangeV1Request {
+  uint64 start = 1;
+  uint64 count = 2;
+} 
+
+message BorEventRequest {
+  types.H256 bor_tx_hash = 1;
+}
+
+message BorEventReply {
+  bool present = 1;
+  uint64 block_number = 2;
+  repeated bytes event_rlps = 3;
+}
