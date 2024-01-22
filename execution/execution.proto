@@ -19,12 +19,14 @@ enum ExecutionStatus {
 message ForkChoiceReceipt {
     ExecutionStatus status = 1;
     types.H256 latest_valid_hash = 2; // Return latest valid hash in case of halt of execution.
+    string validation_error = 3;
 }
 
 // Result we receive after validation
 message ValidationReceipt {
     ExecutionStatus validation_status = 1;
     types.H256 latest_valid_hash = 2;
+    string validation_error = 3;
 };
 
 message IsCanonicalResponse {
@@ -71,7 +73,9 @@ message BlockBody {
 
 message Block {
     Header header = 1;
-    BlockBody body = 2; 
+    BlockBody body = 2;
+    bool check_expected_blob_hashes = 3;
+    repeated types.H256 expected_blob_hashes = 4; // added in Dencun (EIP-4844), optional additional check.
 }
 
 message GetHeaderResponse {
