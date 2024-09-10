@@ -80,7 +80,7 @@ message ExecutionPayload {
   optional bytes parent_beacon_block_root = 19;
 
   // espresso
-  optional Rejected rejected = 101;
+  repeated Rejected rejected = 101;
 }
 
 message Withdrawal {
