@@ -5,13 +5,13 @@ import "types/types.proto";
 
 package remote;
 
-option go_package = "./remote;remote";
+option go_package = "./remote;remoteproto";
 
 
 //Variables Naming:
 //  ts - TimeStamp
 //  tx - Database Transaction
-//  txn - Ethereum Transaction (and TxNum - is also number of Etherum Transaction)
+//  txn - Ethereum Transaction (and TxNum - is also number of Ethereum Transaction)
 //  RoTx - Read-Only Database Transaction
 //  RwTx - Read-Write Database Transaction
 //  k - key
@@ -57,7 +57,7 @@ service KV {
 
   //Temporal methods
   rpc DomainGet(DomainGetReq) returns (DomainGetReply); // can return latest value or as of given timestamp
-  rpc HistoryGet(HistoryGetReq) returns (HistoryGetReply);
+  rpc HistorySeek(HistorySeekReq) returns (HistorySeekReply);
 
   rpc IndexRange(IndexRangeReq) returns (IndexRangeReply);
   rpc HistoryRange(HistoryRangeReq) returns (Pairs);
@@ -85,8 +85,6 @@ enum Op {
   OPEN = 30;
   CLOSE = 31;
   OPEN_DUP_SORT = 32;
-
-  COUNT = 33;
 }
 
 message Cursor {
@@ -102,14 +100,14 @@ message Pair {
   bytes v = 2;
   uint32 cursor_id = 3; // send once after new cursor open
   uint64 view_id = 4;   // return once after tx open. mdbx's tx.ViewID() - id of write transaction in db
-  uint64 tx_id = 5;     // return once after tx open. internal identifier - use it in other methods - to achieve consistant DB view (to read data from same DB tx on server).
+  uint64 tx_id = 5;     // return once after tx open. internal identifier - use it in other methods - to achieve consistent DB view (to read data from same DB tx on server).
 }
 
 enum Action {
   STORAGE = 0;     // Change only in the storage
   UPSERT = 1;      // Change of balance or nonce (and optionally storage)
   CODE = 2;        // Change of code (and optionally storage)
-  UPSERT_CODE = 3; // Change in (balance or nonce) and code (and optinally storage)
+  UPSERT_CODE = 3; // Change in (balance or nonce) and code (and optionally storage)
   REMOVE = 4;      // Account is deleted
 }
 
@@ -167,7 +165,7 @@ message SnapshotsReply {
 message RangeReq  {
   uint64 tx_id = 1; // returned by .Tx()
 
-  // It's ok to query wide/unlilmited range of data, server will use `pagination params`
+  // It's ok to query wide/unlimited range of data, server will use `pagination params`
   // reply by limited batches/pages and client can decide: request next page or not
 
   // query params
@@ -199,14 +197,14 @@ message DomainGetReply{
   bool ok = 2;
 }
 
-message HistoryGetReq {
+message HistorySeekReq {
   uint64 tx_id = 1; // returned by .Tx()
   string table = 2;
   bytes k = 3;
   uint64 ts = 4;
 }
 
-message  HistoryGetReply{
+message  HistorySeekReply{
   bytes v = 1;
   bool ok = 2;
 }
@@ -276,7 +274,7 @@ message Pairs {
   // bytes values = 3;
 }
 
-message ParisPagination {
+message PairsPagination {
   bytes next_key = 1;
   sint64 limit = 2;
 }
