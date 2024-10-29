@@ -128,8 +128,9 @@ message AssembleBlockRequest {
     optional types.H256 parent_beacon_block_root = 6; // added in Dencun (EIP-4788)
     // Optimism support requires these fields, offset starting at 101 to avoid future conflicts
     repeated bytes transactions = 101;
-    bool noTxPool = 102;
-    optional uint64 gasLimit = 103;
+    bool no_tx_pool = 102;
+    optional uint64 gas_limit = 103;
+    optional bytes eip_1559_params = 104;
 }
 
 message AssembleBlockResponse {
