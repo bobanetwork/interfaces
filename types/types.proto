@@ -4,7 +4,7 @@ import "google/protobuf/descriptor.proto";
 
 package types;
 
-option go_package = "./types;types";
+option go_package = "./types;typesproto";
 
 /* Service-level versioning shall use a 3-part version number (M.m.p) following semver rules */
 /* 1. MAJOR version (M): increment when you make incompatible changes                        */
@@ -92,6 +92,10 @@ message BlobsBundleV1 {
   // TODO(eip-4844): define a protobuf message for type Blob
   repeated bytes blobs = 2;
   repeated bytes proofs = 3;
+}
+
+message RequestsBundle {
+  repeated bytes requests = 1;
 }
 
 // End of Engine API types
