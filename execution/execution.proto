@@ -13,7 +13,7 @@ enum ExecutionStatus {
     TooFarAway = 2;
     MissingSegment = 3;
     InvalidForkchoice = 4;
-    Busy = 5; 
+    Busy = 5;
 }
 
 message ForkChoiceReceipt {
@@ -74,7 +74,7 @@ message BlockBody {
 
 message Block {
     Header header = 1;
-    BlockBody body = 2; 
+    BlockBody body = 2;
 }
 
 message GetHeaderResponse {
@@ -129,8 +129,9 @@ message AssembleBlockRequest {
     optional types.H256 parent_beacon_block_root = 6; // added in Dencun (EIP-4788)
     // Optimism support requires these fields, offset starting at 101 to avoid future conflicts
     repeated bytes transactions = 101;
-    bool noTxPool = 102;
-    optional uint64 gasLimit = 103;
+    bool no_tx_pool = 102;
+    optional uint64 gas_limit = 103;
+    optional bytes eip_1559_params = 104;
 }
 
 message AssembleBlockResponse {
@@ -147,6 +148,8 @@ message AssembledBlockData {
     types.H256 block_value = 2;
     types.BlobsBundleV1 blobs_bundle = 3;
     types.RequestsBundle requests = 4;
+    // Optimism adds this field, , offset starting at 101 to avoid future conflicts
+    optional types.H256 parent_beacon_block_root = 101;
 }
 
 message GetAssembledBlockResponse {
@@ -188,7 +191,7 @@ service Execution {
     rpc UpdateForkChoice(ForkChoice) returns(ForkChoiceReceipt);
     // Block Assembly
     // EAGAIN design here, AssembleBlock initiates the asynchronous request, and GetAssembleBlock just return it if ready.
-    rpc AssembleBlock(AssembleBlockRequest) returns(AssembleBlockResponse); 
+    rpc AssembleBlock(AssembleBlockRequest) returns(AssembleBlockResponse);
     rpc GetAssembledBlock(GetAssembledBlockRequest) returns(GetAssembledBlockResponse);
     // Chain Getters.
     rpc CurrentHeader(google.protobuf.Empty) returns(GetHeaderResponse);
